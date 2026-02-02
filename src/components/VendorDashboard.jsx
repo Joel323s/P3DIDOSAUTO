@@ -95,6 +95,7 @@ const VendorDashboard = () => {
       setSales(data || []);
     } catch (err) {
       console.error('Error al cargar ventas:', err);
+      setSales([]); // Asegurar que siempre se establece un valor
     } finally {
       setSalesLoading(false);
     }
@@ -131,8 +132,18 @@ const VendorDashboard = () => {
   };
 
   const printReceipt = (sale) => {
+    if (!sale) return;
+
     const printWindow = window.open('', '_blank', 'width=400,height=600');
+    if (!printWindow) {
+      alert('Por favor, habilita las ventanas emergentes para imprimir tickets.');
+      return;
+    }
+
     const date = new Date(sale.created_at).toLocaleString();
+    const businessName = currentUser?.business_name || 'Comprobante de Venta';
+    const ownerName = currentUser?.owner_name || '';
+    const phone = currentUser?.phone || '';
 
     const html = `
       <html>
@@ -140,10 +151,10 @@ const VendorDashboard = () => {
           <title>Ticket de Venta</title>
           <style>
             @page { margin: 0; }
-            body { 
-              font-family: 'Courier New', Courier, monospace; 
-              width: 80mm; 
-              padding: 10mm; 
+            body {
+              font-family: 'Courier New', Courier, monospace;
+              width: 80mm;
+              padding: 10mm;
               margin: 0;
               font-size: 14px;
               line-height: 1.2;
@@ -159,9 +170,9 @@ const VendorDashboard = () => {
         </head>
         <body onload="window.print(); window.close();">
           <div class="center">
-            <div class="header bold">${currentUser?.business_name || 'Comprobante de Venta'}</div>
-            <div>${currentUser?.owner_name || ''}</div>
-            <div>Tel: ${currentUser?.phone || ''}</div>
+            <div class="header bold">${businessName}</div>
+            <div>${ownerName}</div>
+            <div>Tel: ${phone}</div>
           </div>
           <div class="line"></div>
           <div>FECHA: ${date}</div>
@@ -169,14 +180,14 @@ const VendorDashboard = () => {
           <div class="line"></div>
           <div class="bold">DESCRIPCIÓN</div>
           <div class="items">
-            ${sale.item_description.split(',').map(item => `
+            ${(sale.item_description || '').split(',').map(item => `
               <div class="item">${item.trim()}</div>
             `).join('')}
           </div>
           <div class="line"></div>
           <div class="flex bold" style="font-size: 18px;">
             <span>TOTAL:</span>
-            <span>${sale.currency_used === 'USD' ? '$' : 'Bs.'} ${parseFloat(sale.total_amount).toFixed(2)}</span>
+            <span>${sale.currency_used === 'USD' ? '$' : 'Bs.'} ${parseFloat(sale.total_amount || 0).toFixed(2)}</span>
           </div>
           <div class="line"></div>
           <div class="center footer">

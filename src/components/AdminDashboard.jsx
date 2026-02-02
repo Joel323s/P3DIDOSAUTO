@@ -309,7 +309,7 @@ const AdminDashboard = () => {
                         {(user.subscription_status === 'pending_approval' || !user.is_active) ? (
                           <button
                             onClick={() => handleToggleUserStatus(user.id)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-medium"
                           >
                             Aprobar
                           </button>
@@ -320,7 +320,7 @@ const AdminDashboard = () => {
                               user.subscription_status === 'active' && user.is_active
                                 ? 'bg-red-600 hover:bg-red-700'
                                 : 'bg-yellow-600 hover:bg-yellow-700'
-                            } text-white px-4 py-2 rounded-md text-sm font-medium`}
+                            } text-white px-3 py-1.5 rounded text-xs font-medium`}
                           >
                             {user.subscription_status === 'active' && user.is_active ? 'Desactivar' : 'Reactivar'}
                           </button>
@@ -433,14 +433,14 @@ const AdminDashboard = () => {
                           <button
                             type="submit"
                             disabled={loading}
-                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:col-start-2 sm:text-sm disabled:opacity-50"
+                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 sm:col-start-2 disabled:opacity-50"
                           >
                             {loading ? 'Creando...' : 'Crear Usuario'}
                           </button>
                           <button
                             type="button"
                             onClick={() => setShowAddUserModal(false)}
-                            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 sm:mt-0 sm:col-start-1 sm:text-sm"
+                            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 sm:mt-0 sm:col-start-1"
                           >
                             Cancelar
                           </button>

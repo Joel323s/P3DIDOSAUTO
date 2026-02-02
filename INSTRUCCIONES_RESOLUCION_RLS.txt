@@ -1,0 +1,67 @@
+# INSTRUCCIONES PARA RESOLVER EL PROBLEMA DE RLS
+
+## PASO 1: Corre este comando en la consola SQL de Supabase
+
+Ingresar a: https://app.supabase.com/project/[TU_ID_DE_PROYECTO]/editor
+
+Ejecuta la siguiente consulta SQL directamente en el editor SQL de Supabase:
+
+```sql
+-- DESHABILITAR RLS TEMPORALMENTE
+ALTER TABLE company_users DISABLE ROW LEVEL SECURITY;
+
+-- REHABILITAR CON POLÍTICA MÍNIMA
+ALTER TABLE company_users ENABLE ROW LEVEL SECURITY;
+
+-- CREAR POLÍTICAS BÁSICAS
+CREATE POLICY "Allow service role full access" ON company_users
+FOR ALL TO service_role
+USING (true)
+WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated users to view" ON company_users
+FOR SELECT TO authenticated
+USING (true);
+
+CREATE POLICY "Allow service role to insert" ON company_users
+FOR INSERT TO service_role
+WITH CHECK (true);
+
+-- ASEGURAR QUE EL SERVICE_ROLE TENGA PERMISOS
+GRANT ALL ON company_users TO service_role;
+```
+
+## PASO 2: Configura correctamente los .env
+
+Asegúrate de tener en tu archivo `.env.local`:
+
+```
+VITE_SUPABASE_URL=la-url-de-tu-proyecto-supabase
+VITE_SUPABASE_SERVICE_ROLE_KEY=la-service-role-key-de-tu-proyecto
+```
+
+## PASO 3: Reinicia la aplicación
+
+1. Detén el servidor (Ctrl+C)
+2. Reinicia con `npm run dev`
+
+## NOTA IMPORTANTE:
+
+El problema ocurre porque estás intentando insertar datos con un usuario normal (authenticated), 
+pero las políticas de RLS requieren que ciertas operaciones se hagan con el service_role que 
+tiene más privilegios. 
+
+El servicio AdminUserService.js que creamos utiliza el service_role key, por lo que debería 
+funcionar correctamente una vez que las políticas estén configuradas como arriba.
+
+## ALTERNATIVA RÁPIDA (si nada más funciona):
+
+En la consola SQL de Supabase, ejecuta:
+
+```sql
+-- Dar todos los privilegios directamente
+GRANT ALL PRIVILEGES ON TABLE company_users TO authenticator, service_role;
+ALTER TABLE company_users DISABLE ROW LEVEL SECURITY;
+```
+
+ESTO ES MENOS SEGURO pero resuelve el problema inmediato para pruebas.

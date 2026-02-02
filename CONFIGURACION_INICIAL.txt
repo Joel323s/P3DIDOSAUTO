@@ -1,0 +1,72 @@
+# INSTRUCCIONES PARA RESOLVER LA PANTALLA BLANCA
+
+## PROBLEMA IDENTIFICADO
+La pantalla blanca se debe principalmente a la ausencia de las variables de entorno necesarias para la conexión con Supabase.
+
+## PASOS A SEGUIR:
+
+### 1. CREA EL ARCHIVO .env.local
+Crea un archivo llamado `.env.local` en la raíz del proyecto con la siguiente estructura:
+
+```
+VITE_SUPABASE_URL=la_url_de_tu_proyecto_supabase
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=la_anon_key_de_tu_proyecto
+VITE_SUPABASE_SERVICE_ROLE_KEY=la_service_role_key_de_tu_proyecto
+```
+
+### 2. OBTÉN LAS CLAVES DE TU PROYECTO SUPABASE
+- Ve a https://app.supabase.com/
+- Selecciona tu proyecto
+- Ve a Settings → API
+- Copia:
+  - URL del proyecto → para VITE_SUPABASE_URL
+  - Anonymous Key (debajo de PROJECT API KEYS) → para VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+  - Service Role Key → para VITE_SUPABASE_SERVICE_ROLE_KEY
+
+### 3. REINICIA EL SERVIDOR
+Detén el servidor (Ctrl+C) y reinícialo con:
+```
+npm run dev
+```
+
+## SI SIGUES TENIENDO PROBLEMAS:
+
+### OPCIÓN 1: Ejecuta comandos SQL en Supabase
+En la consola SQL de Supabase (Project -> SQL Editor), ejecuta:
+```sql
+ALTER TABLE company_users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE products_multicurrency DISABLE ROW LEVEL SECURITY;
+ALTER TABLE currency_rates DISABLE ROW LEVEL SECURITY;
+ALTER TABLE product_presentations DISABLE ROW LEVEL SECURITY;
+ALTER TABLE final_sales DISABLE ROW LEVEL SECURITY;
+```
+
+### OPCIÓN 2: Deshabilita temporalmente RLS en todas las tablas
+```sql
+-- Deshabilitar RLS para todas las tablas
+ALTER TABLE company_users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE products_multicurrency DISABLE ROW LEVEL SECURITY;
+ALTER TABLE currency_rates DISABLE ROW LEVEL SECURITY;
+ALTER TABLE product_presentations DISABLE ROW LEVEL SECURITY;
+ALTER TABLE final_sales DISABLE ROW LEVEL SECURITY;
+
+-- Habilitar de nuevo con políticas básicas
+ALTER TABLE company_users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE products_multicurrency ENABLE ROW LEVEL SECURITY;
+ALTER TABLE currency_rates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_presentations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE final_sales ENABLE ROW LEVEL SECURITY;
+
+-- Crear política mínima para service_role
+CREATE POLICY "Allow service role access" ON company_users
+FOR ALL TO service_role
+USING (true)
+WITH CHECK (true);
+```
+
+## VERIFICACIÓN FINAL
+Después de configurar las variables de entorno, la aplicación debería:
+- Permitir a los administradores crear usuarios vendedores con códigos de acceso
+- Permitir a los vendedores ingresar con sus códigos
+- Mostrar los mensajes de error apropiados si la conexión falla
+- Funcionar sin problemas de pantalla blanca

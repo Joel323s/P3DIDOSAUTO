@@ -1,0 +1,186 @@
+🛒 GUÍA RÁPIDA DE CONFIGURACIÓN - AUTO PEDIDO
+===============================================
+
+## PASO 1: Crear Proyecto en Supabase ✅
+
+1. Ve a https://supabase.com
+2. Haz clic en "Sign Up"
+3. Regístrate con tu email
+4. Crea un nuevo proyecto
+   - Nombre: "auto-pedido"
+   - Password: Elige uno seguro
+   - Región: Elige la más cercana a ti
+5. Espera a que se cree (2-3 minutos)
+
+---
+
+## PASO 2: Crear Tablas en Supabase ✅
+
+1. En tu dashboard de Supabase, ve a "SQL Editor"
+2. Copia y pega el siguiente SQL:
+
+```sql
+-- Tabla de Productos
+CREATE TABLE products (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price DECIMAL(10, 2) NOT NULL,
+  image_url TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de Pedidos
+CREATE TABLE orders (
+  id BIGSERIAL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+  phone VARCHAR(20) NOT NULL,
+  address TEXT NOT NULL,
+  notes TEXT,
+  total DECIMAL(10, 2) NOT NULL,
+  status VARCHAR(50) DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de Detalles de Pedidos
+CREATE TABLE order_items (
+  id BIGSERIAL PRIMARY KEY,
+  order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id BIGINT NOT NULL REFERENCES products(id),
+  quantity INT NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Crear índices para mejor rendimiento
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+CREATE INDEX idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX idx_products_name ON products(name);
+```
+
+3. Haz clic en "Run" (Ejecutar)
+4. ¡Listo! Las tablas se han creado
+
+---
+
+## PASO 3: Insertar Productos de Prueba ✅
+
+En el mismo SQL Editor, ejecuta:
+
+```sql
+INSERT INTO products (name, description, price, image_url) VALUES
+('Pizza Margherita', 'Pizza clásica con tomate, mozzarella y albahaca', 12.99, 'https://via.placeholder.com/300x200?text=Pizza'),
+('Hamburguesa Premium', 'Hamburguesa con carne, queso y vegetales', 14.99, 'https://via.placeholder.com/300x200?text=Hamburguesa'),
+('Ensalada César', 'Ensalada fresca con pollo y aderezo César', 10.99, 'https://via.placeholder.com/300x200?text=Ensalada'),
+('Pasta Carbonara', 'Pasta con salsa de huevo, queso y panceta', 13.99, 'https://via.placeholder.com/300x200?text=Pasta'),
+('Refresco', 'Bebida refrescante', 2.99, 'https://via.placeholder.com/300x200?text=Refresco'),
+('Postre Chocolate', 'Delicioso brownie de chocolate', 5.99, 'https://via.placeholder.com/300x200?text=Postre');
+```
+
+---
+
+## PASO 4: Obtener Credenciales de Supabase 🔑
+
+1. En Supabase Dashboard, ve a "Settings" → "API"
+2. Busca estas dos claves:
+   - **Project URL** (similar a: https://xxxxx.supabase.co)
+   - **anon public** key (comienza con eyJ...)
+3. ¡Cópialas!
+
+---
+
+## PASO 5: Configurar Variables de Entorno ⚙️
+
+1. Abre el archivo `.env.local` en la raíz del proyecto
+2. Reemplaza los valores:
+
+```
+VITE_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
+VITE_SUPABASE_ANON_KEY=YOUR_ANON_KEY
+```
+
+Con TUS valores de Supabase (sin comillas)
+
+Ejemplo:
+```
+VITE_SUPABASE_URL=https://abcdefgh.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+---
+
+## PASO 6: Ejecutar el Proyecto 🚀
+
+Abre la terminal en VS Code y ejecuta:
+
+```bash
+npm run dev
+```
+
+Esto abrirá automáticamente: http://localhost:5173
+
+---
+
+## ¡LISTO! Ahora puedes:
+
+✅ Registrarte como nuevo usuario
+✅ Ver los productos en el catálogo
+✅ Agregar productos al carrito
+✅ Hacer pedidos con tu dirección de entrega
+✅ Los pedidos se guardarán en Supabase
+
+---
+
+## TROUBLESHOOTING
+
+❌ "Error: Cannot read properties of undefined (reading 'from')"
+→ Verifica que las credenciales en `.env.local` sean correctas
+
+❌ "No hay productos disponibles"
+→ Asegúrate de haber ejecutado el SQL para insertar productos
+
+❌ "Error de autenticación"
+→ Verifica que el URL de Supabase sea correcto (sin espacios)
+
+---
+
+## ESTRUCTURA DEL PROYECTO
+
+```
+AUTO-PEDIDO/
+├── src/
+│   ├── components/        (Componentes React)
+│   │   ├── Header.jsx
+│   │   ├── LoginForm.jsx
+│   │   ├── ProductList.jsx
+│   │   ├── Cart.jsx
+│   │   └── Checkout.jsx
+│   ├── context/           (Context API para estado global)
+│   │   └── CartContext.jsx
+│   ├── lib/               (Configuración)
+│   │   └── supabase.js
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── .env.local             (Variables de entorno - NO subir a git)
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+└── README.md
+```
+
+---
+
+## COMANDOS ÚTILES
+
+```bash
+npm run dev      # Ejecutar en desarrollo
+npm run build    # Compilar para producción
+npm run preview  # Vista previa de la compilación
+npm install      # Instalar dependencias
+```
+
+---
+
+¡Tu aplicación de Auto Pedido está lista! 🎉

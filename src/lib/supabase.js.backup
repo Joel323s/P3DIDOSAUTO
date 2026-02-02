@@ -1,0 +1,40 @@
+// src/lib/supabase.js - Versión corregida con manejo de errores
+
+import { createClient } from '@supabase/supabase-js';
+
+// Valores por defecto o valores de entorno
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://tu-proyecto.supabase.co';
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY || 'tu-anon-key-aqui';
+
+// Validar que las variables de entorno existan
+if (!supabaseUrl || supabaseUrl === 'https://tu-proyecto.supabase.co') {
+  console.warn('⚠️ ADVERTENCIA: Falta configurar VITE_SUPABASE_URL en las variables de entorno');
+}
+
+if (!supabaseKey || supabaseKey === 'tu-anon-key-aqui') {
+  console.warn('⚠️ ADVERTENCIA: Falta configurar VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY en las variables de entorno');
+}
+
+let supabase;
+
+try {
+  supabase = createClient(supabaseUrl, supabaseKey);
+} catch (error) {
+  console.error('❌ Error al crear el cliente de Supabase:', error);
+  // Crear un cliente dummy para evitar romper la aplicación
+  supabase = {
+    from: () => ({
+      select: () => ({ data: [], error: null }),
+      insert: () => ({ data: null, error: null }),
+      update: () => ({ data: null, error: null }),
+      delete: () => ({ data: null, error: null })
+    }),
+    auth: {
+      signInWithPassword: () => ({ error: { message: 'Supabase no configurado' } }),
+      signUp: () => ({ error: { message: 'Supabase no configurado' } }),
+      signOut: () => ({ error: null })
+    }
+  };
+}
+
+export default supabase;

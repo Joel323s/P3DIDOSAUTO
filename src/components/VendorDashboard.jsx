@@ -1081,59 +1081,59 @@ const VendorDashboard = () => {
         )}
 
         {activeTab === 'sales' && (
-          <div className="glass-card rounded-[3rem] p-8 md:p-12 border border-white/5 animate-fade-in-up">
-            <h3 className="text-5xl font-black text-white mb-10 w-full border-b border-white/10 pb-8 uppercase tracking-tighter italic">
-              Historial de Ventas <span className="text-base not-italic font-medium text-gray-500 ml-4 tracking-normal align-middle">Últimas transacciones</span>
+          <div className="bg-gray-900 rounded-lg p-6 md:p-8 border border-gray-700">
+            <h3 className="text-2xl font-bold text-white mb-6 w-full border-b border-gray-700 pb-4">
+              Historial de Ventas
             </h3>
 
             {salesLoading ? (
-              <div className="py-24 text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400 mx-auto"></div>
+              <div className="py-12 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400 mx-auto"></div>
               </div>
             ) : sales.length === 0 ? (
-              <div className="py-32 text-center bg-white/5 rounded-[3rem] border border-white/5">
-                <span className="text-6xl block mb-6 opacity-20">🧾</span>
-                <p className="text-gray-400 text-2xl font-black italic uppercase">Sin registros de ventas</p>
+              <div className="py-16 text-center bg-gray-800 rounded-lg border border-gray-700">
+                <span className="text-4xl block mb-4">🧾</span>
+                <p className="text-gray-400 text-lg">Sin registros de ventas</p>
               </div>
             ) : (
-              <div className="overflow-hidden rounded-[2.5rem] border border-white/5 shadow-2xl bg-[#0a0a0a]">
+              <div className="overflow-x-auto rounded-lg border border-gray-700">
                 <table className="min-w-full text-left">
-                  <thead className="bg-white/5 border-b border-white/5 uppercase text-[10px] font-black tracking-[0.2em] text-gray-400">
+                  <thead className="bg-gray-800 border-b border-gray-700">
                     <tr>
-                      <th className="px-8 py-6">Cliente</th>
-                      <th className="px-8 py-6">Detalle</th>
-                      <th className="px-8 py-6">Total</th>
-                      <th className="px-8 py-6">Fecha</th>
-                      <th className="px-8 py-6 text-center">Acción</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">Detalle</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">Total</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">Fecha</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider text-center">Acción</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-gray-700">
                     {sales.map((sale) => (
-                      <tr key={sale.id} className="hover:bg-white/5 transition-colors group">
-                        <td className="px-8 py-6">
-                          <p className="font-bold text-white text-lg">{sale.customer_name}</p>
-                          <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">ID: {sale.id.slice(0, 6)}</p>
+                      <tr key={sale.id} className="hover:bg-gray-800 transition-colors">
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-white">{sale.customer_name}</p>
+                          <p className="text-xs text-gray-500 mt-1">ID: {sale.id?.slice(0, 6) || 'N/A'}</p>
                         </td>
-                        <td className="px-8 py-6">
-                          <p className="text-sm text-gray-400 max-w-xs truncate font-medium opacity-80" title={sale.item_description}>
-                            {sale.item_description}
+                        <td className="px-4 py-3">
+                          <p className="text-sm text-gray-300 max-w-xs truncate" title={sale.item_description}>
+                            {sale.item_description || 'N/A'}
                           </p>
                         </td>
-                        <td className="px-8 py-6">
+                        <td className="px-4 py-3">
                           <div className="flex items-baseline gap-1">
-                            <span className="text-xs text-gray-500 font-bold">{sale.currency_used === 'USD' ? '$' : 'Bs.'}</span>
-                            <span className="font-black text-yellow-400 text-xl">{parseFloat(sale.total_amount).toFixed(2)}</span>
+                            <span className="text-xs text-gray-400">{sale.currency_used === 'USD' ? '$' : 'Bs.'}</span>
+                            <span className="font-medium text-yellow-400">{parseFloat(sale.total_amount || 0).toFixed(2)}</span>
                           </div>
                         </td>
-                        <td className="px-8 py-6">
-                          <span className="text-xs font-bold text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                        <td className="px-4 py-3">
+                          <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded">
                             {new Date(sale.created_at).toLocaleDateString()}
                           </span>
                         </td>
-                        <td className="px-8 py-6 text-center">
+                        <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => printReceipt(sale)}
-                            className="bg-white/5 hover:bg-yellow-400 hover:text-black w-12 h-12 rounded-xl flex items-center justify-center transition-all shadow-lg active:scale-95 mx-auto"
+                            className="bg-gray-700 hover:bg-yellow-500 hover:text-black w-10 h-10 rounded flex items-center justify-center transition-colors mx-auto"
                             title="Imprimir Ticket"
                           >
                             🖨️

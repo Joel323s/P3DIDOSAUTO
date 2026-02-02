@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import supabase from '../lib/supabase';
 import { useCurrency } from '../context/CurrencyContext';
+import '../../src/styles/fix-sales-tab.css';
 
 const VendorDashboard = () => {
   const { currentUser, logout } = useAuth();
@@ -1081,7 +1082,7 @@ const VendorDashboard = () => {
         )}
 
         {activeTab === 'sales' && (
-          <div className="bg-gray-900 rounded-lg p-6 md:p-8 border border-gray-700">
+          <div className="bg-gray-900 rounded-lg p-6 md:p-8 border border-gray-700 min-h-[500px]">
             <h3 className="text-2xl font-bold text-white mb-6 w-full border-b border-gray-700 pb-4">
               Historial de Ventas
             </h3>
@@ -1111,7 +1112,7 @@ const VendorDashboard = () => {
                     {sales.map((sale) => (
                       <tr key={sale.id} className="hover:bg-gray-800 transition-colors">
                         <td className="px-4 py-3">
-                          <p className="font-medium text-white">{sale.customer_name}</p>
+                          <p className="font-medium text-white">{sale.customer_name || 'N/A'}</p>
                           <p className="text-xs text-gray-500 mt-1">ID: {sale.id?.slice(0, 6) || 'N/A'}</p>
                         </td>
                         <td className="px-4 py-3">
@@ -1132,7 +1133,14 @@ const VendorDashboard = () => {
                         </td>
                         <td className="px-4 py-3 text-center">
                           <button
-                            onClick={() => printReceipt(sale)}
+                            onClick={() => {
+                              try {
+                                printReceipt(sale);
+                              } catch (error) {
+                                console.error('Error al imprimir ticket:', error);
+                                alert('Error al intentar imprimir el ticket');
+                              }
+                            }}
                             className="bg-gray-700 hover:bg-yellow-500 hover:text-black w-10 h-10 rounded flex items-center justify-center transition-colors mx-auto"
                             title="Imprimir Ticket"
                           >

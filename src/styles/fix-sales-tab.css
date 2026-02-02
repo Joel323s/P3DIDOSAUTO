@@ -1,0 +1,31 @@
+/* Estilos temporales para solucionar el problema de la pestaña de ventas */
+
+/* Asegurar que el fondo no se vuelva negro */
+.vendor-dashboard-fix {
+  background-color: #050505 !important;
+}
+
+/* Estilos específicos para la pestaña de ventas */
+.sales-tab-content {
+  background-color: #050505 !important;
+  color: white !important;
+}
+
+.sales-tab-content * {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Evitar conflictos con estilos de glassmorphism */
+.no-glass-effect {
+  background: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Asegurar visibilidad en la pestaña de ventas */
+.sales-visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}

@@ -46,7 +46,7 @@ const VendorDashboard = () => {
   };
 
   useEffect(() => {
-    if (activeTab === 'sales') {
+    if (activeTab === 'orders') {
       loadSales();
     }
   }, [currentUser, activeTab]);
@@ -164,10 +164,10 @@ const VendorDashboard = () => {
             Inventario
           </button>
           <button
-            onClick={() => setActiveTab('sales')}
-            className={`px-4 py-2 rounded ${activeTab === 'sales' ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+            onClick={() => setActiveTab('orders')}
+            className={`px-4 py-2 rounded ${activeTab === 'orders' ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}`}
           >
-            Ventas
+            Pedidos
           </button>
           <button
             onClick={() => setActiveTab('presentation')}
@@ -199,18 +199,18 @@ const VendorDashboard = () => {
           </div>
         )}
 
-        {/* Sección de Ventas */}
-        {activeTab === 'sales' && (
+        {/* Sección de Pedidos */}
+        {activeTab === 'orders' && (
           <div className="bg-gray-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Historial de Ventas</h2>
-            
+            <h2 className="text-2xl font-bold mb-4">Historial de Pedidos</h2>
+
             {salesLoading ? (
               <div className="py-12 text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400 mx-auto"></div>
               </div>
             ) : sales.length === 0 ? (
               <div className="py-16 text-center bg-gray-700 rounded-lg">
-                <p className="text-gray-400 text-lg">Sin registros de ventas</p>
+                <p className="text-gray-400 text-lg">Sin registros de pedidos</p>
               </div>
             ) : (
               <div className="overflow-x-auto">

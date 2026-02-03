@@ -56,7 +56,7 @@ const VendorDashboard = () => {
         {activeTab === 'orders' && (
           <div className="bg-gray-100 p-6 rounded-lg">
             <h2 className="text-2xl font-bold mb-4 text-gray-800">Historial de Pedidos</h2>
-            <p className="text-gray-600">Sección de pedidos</p>
+            <p className="text-gray-600">Sección de pedidos sin datos problemáticos</p>
           </div>
         )}
 

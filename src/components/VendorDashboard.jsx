@@ -7,6 +7,10 @@ import '../../src/styles/fix-sales-tab.css';
 const VendorDashboard = () => {
   const { currentUser, logout } = useAuth();
   const { exchangeRates, updateExchangeRate } = useCurrency();
+
+  // Manejar posibles errores en la renderización
+  const [hasError, setHasError] = useState(false);
+  const [errorInfo, setErrorInfo] = useState(null);
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -97,6 +101,8 @@ const VendorDashboard = () => {
     } catch (err) {
       console.error('Error al cargar ventas:', err);
       setSales([]); // Asegurar que siempre se establece un valor
+      // Opcional: mostrar mensaje de error al usuario
+      // setError('No se pudieron cargar las ventas. Intente nuevamente.');
     } finally {
       setSalesLoading(false);
     }
@@ -548,6 +554,23 @@ const VendorDashboard = () => {
   }
 
   // Dashboard Header & Stats Enhancement
+  if (hasError) {
+    return (
+      <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-4">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Ha ocurrido un error</h2>
+          <p className="mb-4">Intenta recargar la página o contacta al soporte técnico</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          >
+            Recargar Página
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-yellow-400 selection:text-black font-['Outfit']">
       {/* Top Navigation Cockpit */}
@@ -947,15 +970,15 @@ const VendorDashboard = () => {
 
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Subir Imagen Fondo</label>
+                      <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Subir Imagen o Video de Fondo</label>
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/*,video/*"
                         onChange={async (e) => {
                           const file = e.target.files[0];
                           if (file) {
                             const url = await handleFileUpload(file);
-                            if (url) { setPresentationSettings({ ...presentationSettings, mediaUrl: url }); alert('Imagen cargada'); }
+                            if (url) { setPresentationSettings({ ...presentationSettings, mediaUrl: url }); alert(file.type.startsWith('image/') ? 'Imagen cargada' : 'Video cargado'); }
                           }
                         }}
                         className="w-full text-xs text-gray-500 file:mr-2 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-white/10 file:text-white hover:file:bg-white/20 transition-all cursor-pointer"
@@ -993,7 +1016,14 @@ const VendorDashboard = () => {
               <div className="lg:col-span-2 space-y-8">
                 <div className="relative aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl group">
                   {presentationSettings.mediaUrl ? (
-                    <img src={presentationSettings.mediaUrl} className="w-full h-full object-cover" />
+                    presentationSettings.mediaUrl.toLowerCase().endsWith('.mp4') ||
+                    presentationSettings.mediaUrl.toLowerCase().endsWith('.mov') ||
+                    presentationSettings.mediaUrl.toLowerCase().endsWith('.avi') ||
+                    presentationSettings.mediaUrl.toLowerCase().endsWith('.webm') ? (
+                      <video src={presentationSettings.mediaUrl} className="w-full h-full object-cover" autoPlay muted loop />
+                    ) : (
+                      <img src={presentationSettings.mediaUrl} className="w-full h-full object-cover" />
+                    )
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
                       <p className="text-gray-600 font-black uppercase tracking-widest">Vista Previa</p>
